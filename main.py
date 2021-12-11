@@ -63,6 +63,9 @@ def handle_message(event):
 
     # オウム返し
     elif event.message.text == 'オウム返し':
+        rep = TextSendMessage(text="なにかしゃべって！")
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=rep))
+
         message = event.message.text
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=message))
 
