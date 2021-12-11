@@ -11,6 +11,8 @@ from linebot.models import (
 )
 import os
 import random
+from time import time
+from datetime import timedelta
 
 app = Flask(__name__)
 
@@ -46,9 +48,11 @@ def callback():
 
     return 'OK'
 
-
+user = {}
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+    id = event.source.user_id   #LINEのユーザーIDの取得
+
     # 時間割言うやつ
     if event.message.text =='時間割を教えて':
         day_list = ["月", "火", "水", "木", "金"]
@@ -65,6 +69,43 @@ def handle_message(event):
     elif event.message.text == 'オウム返し':
         message = event.message.text
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=message))
+
+    # Timer
+    elif event.message.text == "start":
+
+        if not id in user:  #新規ユーザーの場合
+            user[id] = {}
+            user[id]["total"] = 0
+
+        user[id]["start"] = time()  #start実行時の時間を取得
+
+        totalTimeStr = timedelta(seconds = user[id]["total"])  #s -> h:m:s
+
+        reply_message = f"Start Timer\n\nTotal: {totalTimeStr}"
+
+    elif event.message.text == "stop":
+        end = time()  #end実行時の時間を取得
+        dif = int(end - user[id]["start"])  #経過時間を取得
+        user[id]["total"] += dif  #総時間を更新
+
+        timeStr = timedelta(seconds = dif)
+        totalTimeStr = timedelta(seconds = user[id]["total"])
+
+        reply_message = f"Stop Timer\n\nTime: {timeStr}s\nTotal: {totalTimeStr}"
+
+    elif event.message.text == "reset":
+        user[id]["total"] = 0 #総時間を0にリセット
+
+        totalTimeStr = timedelta(seconds = user[id]["total"])
+
+        reply_message = f"Reset Timer\n\nTotal: {totalTimeStr}"
+
+    else:
+        reply_message = "Please send \"start\" or \"stop\"or \"reset\""  #指定外の3語に対する応答
+
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text=reply_message))
 
 
 if __name__ == "__main__":
