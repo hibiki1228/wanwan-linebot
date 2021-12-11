@@ -49,25 +49,22 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    # 基本的にここにコードを書いていきます。
-    message = event.message.text
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text=message))
+    # 時間割言うやつ
+    if event.message.text =='時間割を教えて':
+        day_list = ["月", "火", "水", "木", "金"]
+        items = [QuickReplyButton(action=MessageAction(label=f"{day}", text=f"{day}曜日の時間割")) for day in day_list]
+        messages = TextSendMessage(text="何曜日の時間割ですか？",quick_reply=QuickReply(items=items))
+        line_bot_api.reply_message(event.reply_token, messages=messages)
+    elif event.message.text in lesson:
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextMessage(text=lesson[event.message.text])
+        )
 
-# ここはいらない～ -------------------------------------------------------------------------------------------
-# def handle_message(event):
-#     if event.message.text =='時間割を教えて':
-#         day_list = ["月", "火", "水", "木", "金"]
-#         items = [QuickReplyButton(action=MessageAction(label=f"{day}", text=f"{day}曜日の時間割")) for day in day_list]
-#         messages = TextSendMessage(text="何曜日の時間割ですか？",quick_reply=QuickReply(items=items))
-#         line_bot_api.reply_message(event.reply_token, messages=messages)
-#     elif event.message.text in lesson:
-#         line_bot_api.reply_message(
-#             event.reply_token,
-#             TextMessage(text=lesson[event.message.text])
-#         )
-# --------------------------------------------------------------------------------------------------------------
+    # オウム返し
+    elif event.message.text == 'オウム返し':
+        message = event.message.text
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=message))
 
 
 if __name__ == "__main__":
