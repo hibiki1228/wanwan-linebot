@@ -13,6 +13,8 @@ import os
 import random
 from time import time
 from datetime import timedelta
+import requests
+import json
 
 app = Flask(__name__)
 
@@ -30,6 +32,24 @@ lesson = {
     '木曜日の時間割':'木曜日は\n1:たいいく\n2:かていか\n3:りか\nです。',
     '金曜日の時間割':'金曜日は\n1:さんすう\n2:こくご\n3:がっかつ\nです。'
 }
+
+# TimeTree API
+ACCESS_TOKEN = 'EDR9y9hK7VVVU98P4WPXN6PyIhXEj1qmv6uspNCEy8Har2Ee'
+
+# ヘッダーの設定
+headers = {'Accept': 'application/vnd.timetree.v1+json',
+'Authorization': 'Bearer ' + ACCESS_TOKEN}
+
+URL_CIRCLE = 'https://timetreeapis.com/calendars/KppFAdQn8Rfm/upcoming_events?timezone=Asia/Tokyo'
+URL_MY = 'https://timetreeapis.com/calendars/xWZ6gorhZDAD/upcoming_events?timezone=Asia/Tokyo'
+URL_FAM = 'https://timetreeapis.com/calendars/n2htotVABDVf/upcoming_events?timezone=Asia/Tokyo'
+
+r = requests.get(URL_CIRCLE, headers=headers)
+data_cir = r.json()
+r = requests.get(URL_MY, headers=headers)
+data_my = r.json()
+r = requests.get(URL_FAM, headers=headers)
+data_fam = r.json()
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -53,7 +73,7 @@ user = {}
 def handle_message(event):
     id = event.source.user_id   #LINEのユーザーIDの取得
 
-    # 時間割言うやつ
+    # 時間割言うやつ---------------------------------
     if event.message.text =='時間割を教えて':
         day_list = ["月", "火", "水", "木", "金"]
         items = [QuickReplyButton(action=MessageAction(label=f"{day}", text=f"{day}曜日の時間割")) for day in day_list]
@@ -65,12 +85,17 @@ def handle_message(event):
             TextMessage(text=lesson[event.message.text])
         )
 
-    # オウム返し
+    # オウム返し------------------------------------
     elif event.message.text == 'オウム返し':
         message = event.message.text
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=message))
 
-    # Timer
+    # Calender 表示
+    elif event.message.text == "calender":
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=data_cir['data']['attribute']['title']))
+    
+
+    # Timer----------------------------------------
     elif event.message.text == "start":
 
         if not id in user:  #新規ユーザーの場合
@@ -106,6 +131,8 @@ def handle_message(event):
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=reply_message))
+
+    
 
 
 if __name__ == "__main__":
