@@ -100,7 +100,7 @@ def handle_message(event):
             message += event_cir['attributes']['title'] + "\n"
         message += "Family:\n"
         for event_fam in data_fam['data']:
-            if event_fam['attributes']['title'] == "\0":
+            if event_fam['attributes']['title'] == None:
                 message += "予定「NULL」\n"
             else:
                 message += event_fam['attributes']['title'] + "\n"
