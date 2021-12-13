@@ -100,9 +100,9 @@ def handle_message(event):
             message += event_cir['attributes']['title'] + "\n"
         message += "Family:\n"
         for event_fam in data_fam['data']:
-            if event_fam['attributes']['title'] == None:
-                message += "予定「NULL」\n"
-            else:
+            # if event_fam['attributes']['title'] == None:
+            #     message += "予定「NULL」\n"
+            # else:
                 message += event_fam['attributes']['title'] + "\n"
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=message))
     
