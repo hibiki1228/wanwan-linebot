@@ -92,7 +92,8 @@ def handle_message(event):
 
     # Calender 表示
     elif event.message.text == "calender":
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=data_cir['data']['attribute']['title']))
+        for event_cir in data_cir['data']:
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=event_cir['attribute']['title']))
     
 
     # Timer----------------------------------------
