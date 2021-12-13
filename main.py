@@ -110,6 +110,10 @@ def handle_message(event):
 
         reply_message = f"Start Timer\n\nTotal: {totalTimeStr}"
 
+        line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text=reply_message))
+
     elif event.message.text == "stop":
         end = time()  #end実行時の時間を取得
         dif = int(end - user[id]["start"])  #経過時間を取得
@@ -120,6 +124,10 @@ def handle_message(event):
 
         reply_message = f"Stop Timer\n\nTime: {timeStr}s\nTotal: {totalTimeStr}"
 
+        line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text=reply_message))
+
     elif event.message.text == "reset":
         user[id]["total"] = 0 #総時間を0にリセット
 
@@ -127,12 +135,14 @@ def handle_message(event):
 
         reply_message = f"Reset Timer\n\nTotal: {totalTimeStr}"
 
-    else:
-        reply_message = "Please send \"start\" or \"stop\"or \"reset\""  #指定外の3語に対する応答
-
-    line_bot_api.reply_message(
+        line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=reply_message))
+
+    # else:
+    #     reply_message = "Please send \"start\" or \"stop\"or \"reset\""  #指定外の3語に対する応答
+
+    
 
     
 
