@@ -93,13 +93,13 @@ def handle_message(event):
 
     # Calender 表示
     elif event.message.text == "カレンダー":
-        message = "今日の予定!\n---------\nMy calender:\n"
+        message = "今日の予定!\n---------\n【My calender】\n"
         for event_my in data_my['data']:
             message += "\t" + event_my['attributes']['title'] + "\n"
-        message += "---------\n軽音:\n"
+        message += "---------\n【軽音】\n"
         for event_cir in data_cir['data']:
             message += "\t" + event_cir['attributes']['title'] + "\n"
-        message += "---------\nFamily:\n"
+        message += "---------\n【Family】\n"
         for event_fam in data_fam['data']:
                 message += "\t" + event_fam['attributes']['title'] + "\n"
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=message))
