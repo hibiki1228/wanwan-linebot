@@ -68,13 +68,14 @@ def callback():
 
     return 'OK'
 
+
 user = {}
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     id = event.source.user_id   #LINEのユーザーIDの取得
 
     # 時間割言うやつ---------------------------------
-    if event.message.text =='時間割を教えて':
+    if event.message.text =='時間割':
         day_list = ["月", "火", "水", "木", "金"]
         items = [QuickReplyButton(action=MessageAction(label=f"{day}", text=f"{day}曜日の時間割")) for day in day_list]
         messages = TextSendMessage(text="何曜日の時間割ですか？",quick_reply=QuickReply(items=items))
@@ -91,19 +92,16 @@ def handle_message(event):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=message))
 
     # Calender 表示
-    elif event.message.text == "calender":
-        message = "My calender:\n"
+    elif event.message.text == "カレンダー":
+        message = "今日の予定!\n---------\nMy calender:\n"
         for event_my in data_my['data']:
-            message += event_my['attributes']['title'] + "\n"
-        message += "軽音:\n"
+            message += "\t" + event_my['attributes']['title'] + "\n"
+        message += "---------\n軽音:\n"
         for event_cir in data_cir['data']:
-            message += event_cir['attributes']['title'] + "\n"
-        message += "Family:\n"
+            message += "\t" + event_cir['attributes']['title'] + "\n"
+        message += "---------\nFamily:\n"
         for event_fam in data_fam['data']:
-            # if event_fam['attributes']['title'] == None:
-            #     message += "予定「NULL」\n"
-            # else:
-                message += event_fam['attributes']['title'] + "\n"
+                message += "\t" + event_fam['attributes']['title'] + "\n"
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=message))
     
 
