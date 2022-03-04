@@ -155,38 +155,46 @@ def handle_message(event):
         win = False
 
         for l in range(len_answer):
-            print("Input 5 char: ")
-            word = input()
-            len_word = len(word)
-            l_word = list(word)
-
-            result = [0, 0, 0, 0, 0]
-            len_result = len(result)
-
-            if len_word != 5:
-                print("I said \"Input 5 char.\"\n")
-            elif answer == word:
-                print("Correct!!")
-                break
-            else:
-                for i in range(len_answer):
-                    for j in range(len_word):
-                        if l_answer[i] == l_word[i]:
-                            result[i] = 2
-                        elif l_answer[i] == l_word[j]:
-                            result[j] = 1
-                print("{} challenge result\n".format(l + 1))
-                for k in range(len_result):
-                    if result[k] == 0:
-                        print("✕ ")
-                    elif result[k] == 1:
-                        print("△ ")
-                    elif result[k] == 2:
-                        print("◯ ")
-                    else:
-                        print("error ")
+            reply_message = "Input 5 char: "
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
+            @handler.add(MessageEvent, answer=TextMessage)
+            def handle_message(event):
+                word = event.message.text
+                len_word = len(word)
+                l_word = list(word)
     
-            print("\nInput Next word.\n")
+                result = [0, 0, 0, 0, 0]
+                len_result = len(result)
+    
+                if len_word != 5:
+                    reply_message = "I said \"Input 5 char.\"\n"
+                    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
+                elif answer == word:
+                    reply_message = "Correct!!"
+                    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
+                    break
+                else:
+                    for i in range(len_answer):
+                        for j in range(len_word):
+                            if l_answer[i] == l_word[i]:
+                                result[i] = 2
+                            elif l_answer[i] == l_word[j]:
+                                result[j] = 1
+                    reply_message = "challenge result\n"
+                    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
+                    for k in range(len_result):
+                        if result[k] == 0:
+                            message += "✕ "
+                        elif result[k] == 1:
+                            message += "△ "
+                        elif result[k] == 2:
+                            message += "◯ "
+                        else:
+                            message += "error "
+                    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=message))
+        
+                reply_message = "\nInput Next word.\n"
+                line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_message))
     # else:
     #     reply_message = "Please send \"start\" or \"stop\"or \"reset\""  #指定外の3語に対する応答
 
