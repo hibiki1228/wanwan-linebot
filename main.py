@@ -51,6 +51,7 @@ data_my = r.json()
 r = requests.get(URL_FAM, headers=headers)
 data_fam = r.json()
 
+
 @app.route("/callback", methods=['POST'])
 def callback():
     # get X-Line-Signature header value
@@ -147,10 +148,47 @@ def handle_message(event):
         event.reply_token,
         TextSendMessage(text=reply_message))
 
+    elif event.message.text == "wordle":
+        answer = 'reach'
+        l_answer = list(answer)
+        len_answer = len(l_answer)
+        win = False
+
+        for l in range(len_answer):
+            print("Input 5 char: ")
+            word = input()
+            len_word = len(word)
+            l_word = list(word)
+
+            result = [0, 0, 0, 0, 0]
+            len_result = len(result)
+
+            if len_word != 5:
+                print("I said \"Input 5 char.\"\n")
+            elif answer == word:
+                print("Correct!!")
+                break
+            else:
+                for i in range(len_answer):
+                    for j in range(len_word):
+                        if l_answer[i] == l_word[i]:
+                            result[i] = 2
+                        elif l_answer[i] == l_word[j]:
+                            result[j] = 1
+                print("{} challenge result\n".format(l + 1))
+                for k in range(len_result):
+                    if result[k] == 0:
+                        print("✕ ")
+                    elif result[k] == 1:
+                        print("△ ")
+                    elif result[k] == 2:
+                        print("◯ ")
+                    else:
+                        print("error ")
+    
+            print("\nInput Next word.\n")
     # else:
     #     reply_message = "Please send \"start\" or \"stop\"or \"reset\""  #指定外の3語に対する応答
-
-    
 
     
 
